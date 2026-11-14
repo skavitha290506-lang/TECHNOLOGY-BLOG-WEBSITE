@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import "./BlogCard.css";
 
+const API = import.meta.env.VITE_API_URL;
+
 function BlogCard() {
   const [blogs, setBlogs] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -17,11 +19,15 @@ function BlogCard() {
         setLoading(true);
         setError("");
 
+        if (!API) {
+          throw new Error("Backend API URL is missing");
+        }
+
         const [blogRes, categoryRes] = await Promise.all([
-          fetch("http://localhost:5000/api/blogs", {
+          fetch(`${API}/api/blogs`, {
             cache: "no-store"
           }),
-          fetch("http://localhost:5000/api/categories", {
+          fetch(`${API}/api/categories`, {
             cache: "no-store"
           })
         ]);
@@ -57,7 +63,7 @@ function BlogCard() {
 
     return image.startsWith("http")
       ? image
-      : `http://localhost:5000${image}`;
+      : `${API}${image}`;
   };
 
   const filteredBlogs = blogs.filter((blog) => {
@@ -81,11 +87,6 @@ function BlogCard() {
     const matchesCategory =
       selectedCategory === "all" ||
       blogCategory === selectedCategory;
-
-    console.log("Selected Category:", category);
-    console.log("Checking Blog:", blog.title);
-    console.log("Blog Category:", blogCategory);
-    console.log("Matches Category:", matchesCategory);
 
     return matchesSearch && matchesCategory;
   });

@@ -2,14 +2,29 @@
 import React, { useEffect, useState } from "react";
 import "./Header.css";
 
+const API = import.meta.env.VITE_API_URL;
+
 function Header() {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/categories")
-      .then((response) => response.json())
-      .then((data) => setCategories(data))
-      .catch((error) => console.log("Category Error:", error));
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${API}/api/categories`);
+
+        if (!response.ok) {
+          throw new Error("Unable to fetch categories");
+        }
+
+        const data = await response.json();
+
+        setCategories(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Category Error:", error);
+      }
+    };
+
+    fetchCategories();
   }, []);
 
   return (
@@ -40,7 +55,7 @@ function Header() {
             </div>
           </div>
 
-          <a href="#admin">Admin</a>
+          <a href="#admin-section">Admin</a>
         </nav>
 
         <a href="#login" className="login-btn">

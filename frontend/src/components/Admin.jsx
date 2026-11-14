@@ -1,7 +1,8 @@
+
 import React, { useEffect, useState } from "react";
 import "./Admin.css";
 
-const API = "http://localhost:5000/api";
+const API = import.meta.env.VITE_API_URL;
 
 function Admin() {
   const [blogs, setBlogs] = useState([]);
@@ -31,7 +32,7 @@ function Admin() {
   // Fetch Blogs
   const fetchBlogs = async () => {
     try {
-      const response = await fetch(`${API}/blogs`);
+      const response = await fetch(`${API}/api/blogs`);
       const data = await response.json();
 
       if (response.ok) {
@@ -45,7 +46,7 @@ function Admin() {
   // Fetch Categories
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`${API}/categories`);
+      const response = await fetch(`${API}/api/categories`);
       const data = await response.json();
 
       if (response.ok) {
@@ -59,14 +60,13 @@ function Admin() {
   // Image Upload
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-
     if (!file) return;
 
     const formData = new FormData();
     formData.append("image", file);
 
     try {
-      const response = await fetch(`${API}/blogs/upload`, {
+      const response = await fetch(`${API}/api/blogs/upload`, {
         method: "POST",
         body: formData
       });
@@ -108,8 +108,8 @@ function Admin() {
       setLoading(true);
 
       const url = editBlogId
-        ? `${API}/blogs/${editBlogId}`
-        : `${API}/blogs`;
+        ? `${API}/api/blogs/${editBlogId}`
+        : `${API}/api/blogs`;
 
       const response = await fetch(url, {
         method: editBlogId ? "PUT" : "POST",
@@ -126,7 +126,11 @@ function Admin() {
         return;
       }
 
-      setMessage(editBlogId ? "Blog updated successfully" : "Blog added successfully");
+      setMessage(
+        editBlogId
+          ? "Blog updated successfully"
+          : "Blog added successfully"
+      );
 
       resetBlogForm();
       fetchBlogs();
@@ -156,12 +160,14 @@ function Admin() {
 
   // Delete Blog
   const handleBlogDelete = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this blog?");
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this blog?"
+    );
 
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`${API}/blogs/${id}`, {
+      const response = await fetch(`${API}/api/blogs/${id}`, {
         method: "DELETE"
       });
 
@@ -209,8 +215,8 @@ function Admin() {
       setLoading(true);
 
       const url = editCategoryId
-        ? `${API}/categories/${editCategoryId}`
-        : `${API}/categories`;
+        ? `${API}/api/categories/${editCategoryId}`
+        : `${API}/api/categories`;
 
       const response = await fetch(url, {
         method: editCategoryId ? "PUT" : "POST",
@@ -267,7 +273,7 @@ function Admin() {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`${API}/categories/${id}`, {
+      const response = await fetch(`${API}/api/categories/${id}`, {
         method: "DELETE"
       });
 
@@ -372,7 +378,7 @@ function Admin() {
                   src={
                     image.startsWith("http")
                       ? image
-                      : `http://localhost:5000/${image.replace(/^\/+/, "")}`
+                      : `${API}${image.startsWith("/") ? "" : "/"}${image}`
                   }
                   alt="Blog Preview"
                 />

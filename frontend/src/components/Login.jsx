@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import "./Login.css";
 
+const API = import.meta.env.VITE_API_URL;
+
 function Login() {
   const [isRegister, setIsRegister] = useState(false);
   const [name, setName] = useState("");
@@ -24,8 +26,8 @@ function Login() {
 
     try {
       const url = isRegister
-        ? "http://localhost:5000/api/auth/register"
-        : "http://localhost:5000/api/auth/login";
+        ? `${API}/api/auth/register`
+        : `${API}/api/auth/login`;
 
       const response = await fetch(url, {
         method: "POST",
@@ -83,7 +85,6 @@ function Login() {
   return (
     <section className="login-section" id="login">
       <div className="login-container">
-
         <div className="login-icon">TN</div>
 
         <span className="login-label">YOUR TECHNOVA ACCOUNT</span>
